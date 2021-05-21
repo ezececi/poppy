@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
+
 import cv2
 import rospy
 from poppy_controllers.srv import GetImage
 from cv_bridge import CvBridge
-import datetime
 from tflite_runtime.interpreter import Interpreter
 import numpy as np
 
@@ -48,31 +49,59 @@ def detect_objects(interpreter, image, threshold):
 
 
 def repositioning():
-    interpreter = Interpreter('detect.tflite')
+    print('Repostionning start')
+    rospy.loginfo('Repositioning start')
+    
+    interpreter = Interpreter('/home/eze/catkin_ws/src/poppy_senses/src/detect.tflite')
     interpreter.allocate_tensors()
     _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
 
-    cap = cv2.VideoCapture(0)
-    while cap.isOpened() and (not rospy.is_shutdown()):
-        ret, frame = cap.read()
-        img = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), (320,320))
-        res = detect_objects(interpreter, img, 0.8)
-        rospy.loginfo(str(res))
+    rospy.wait_for_service('get_image')
 
-        # Use the best score result only
-        res.sort(key=lambda x:x['score'])
-        for result in res:
-            ymin, xmin, ymax, xmax = result['bounding_box']
-            xmin = int(max(1,xmin * CAMERA_WIDTH))
-            xmax = int(min(CAMERA_WIDTH, xmax * CAMERA_WIDTH))
-            ymin = int(max(1, ymin * CAMERA_HEIGHT))
-            ymax = int(min(CAMERA_HEIGHT, ymax * CAMERA_HEIGHT))
-            break
-        
-        rospy.loginfo('ymin, xmin, ymax, xmax : %d, %d, %d, %d', ymin, xmin, ymax, xmax)
+    cv2.namedWindow("Image window", 1)
+    
+    while (not rospy.is_shutdown()):
+        try:
+            get_image = rospy.ServiceProxy("get_image", GetImage)
+            response = get_image()
+            print('got an image')
+
+            bridge = CvBridge()
+            image = bridge.imgmsg_to_cv2(response.image)
 
 
-# Press the green button in the gutter to run the script.
+            img = cv2.resize(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), (320,320))
+            res = detect_objects(interpreter, img, 0.8)
+
+            # Use the best score result only
+            ymin = 0
+            xmin = 0
+            ymax =0
+            xmax = 0
+            #res.sort(key=lambda x:x['score'])
+            for result in res:
+                ymin, xmin, ymax, xmax = result['bounding_box']
+                xmin = int(max(1,xmin * CAMERA_WIDTH))
+                xmax = int(min(CAMERA_WIDTH, xmax * CAMERA_WIDTH))
+                ymin = int(max(1, ymin * CAMERA_HEIGHT))
+                ymax = int(min(CAMERA_HEIGHT, ymax * CAMERA_HEIGHT))
+                print('ymin, xmin, ymax, xmax :', ymin, xmin, ymax, xmax)
+                image = cv2.rectangle(image,(xmin, ymin),(xmax, ymax),(0,255,0),1)
+                
+            
+            cv2.imshow('Image Window', image)
+            cv2.waitKey(3)
+
+            #rospy.loginfo('ymin, xmin, ymax, xmax : %d, %d, %d, %d', ymin, xmin, ymax, xmax)
+            
+
+        except rospy.ServiceException as e:
+            print("Service call failed: %s"%e)
+        except Exception as err:
+            print("Exception : %s"%err)
+            exit()
+
+
 if __name__ == '__main__':
     repositioning()
     exit()
