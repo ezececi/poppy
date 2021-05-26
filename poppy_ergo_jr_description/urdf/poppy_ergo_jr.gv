@@ -1,0 +1,26 @@
+digraph G {
+node [shape=box];
+"base_link" [label="base_link"];
+"long_U" [label="long_U"];
+"section_1" [label="section_1"];
+"section_2" [label="section_2"];
+"section_3" [label="section_3"];
+"section_4" [label="section_4"];
+"section_5" [label="section_5"];
+"fixed_tip" [label="fixed_tip"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"base_link" -> "m1" [label="xyz: 0 0 0.0327993 \nrpy: 0 -0 0"]
+"m1" -> "long_U"
+"long_U" -> "m2" [label="xyz: 0 0 0.0240007 \nrpy: 0 -1.5708 0"]
+"m2" -> "section_1"
+"section_1" -> "m3" [label="xyz: 0.054 0 0 \nrpy: 0 -0 0"]
+"m3" -> "section_2"
+"section_2" -> "m4" [label="xyz: 0.045 0 0 \nrpy: 0 -1.5708 0"]
+"m4" -> "section_3"
+"section_3" -> "m5" [label="xyz: 0 -0.048 0 \nrpy: 0 -1.5708 0"]
+"m5" -> "section_4"
+"section_4" -> "m6" [label="xyz: 0 -0.054 0 \nrpy: 0 -0 0"]
+"m6" -> "section_5"
+"section_5" -> "t7f" [label="xyz: 0 -0.075 0 \nrpy: -1.5708 0 0"]
+"t7f" -> "fixed_tip"
+}

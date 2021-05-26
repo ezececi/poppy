@@ -1,0 +1,14 @@
+<launch>
+      <arg name="model" />
+      <arg name="gui" default="False" />
+
+      <!-- Choose one of these available end effectors -->
+      <arg name="lamp" default="false" />
+      <arg name="gripper" default="false" />
+      
+      <param name="robot_description" command="$(find xacro)/xacro $(find poppy_ergo_jr_description)/urdf/poppy_ergo_jr.urdf.xacro gripper:=$(arg gripper) lamp:=$(arg lamp)" />
+      <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg gui)"/>
+      <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg gui)"/>
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(find poppy_ergo_jr_description)/launch/display.rviz" />
+</launch>
