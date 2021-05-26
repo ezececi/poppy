@@ -1,9 +1,9 @@
-# Small robotic arm based on Poppy project
+# Small robotic arm based on the Poppy project
 
 
 ## Goal
 My objective is to develop a robotic arm, for the sake of learing robotics and hopefully using it in everyday life, capable of pushing, pulling and 
-turning buttons/knobs/etc, with computer vision support, voice-controlled, and text to speech for interfacing with human users.
+turning buttons/knobs/etc, with computer vision support, voice-controlled, and text to speech for interfacing with human users. It is currently based on the [Poppy project](https://www.poppy-project.org/fr/robots/poppy-ergo-jr/), running on ROS 1.
 As I can't spend much time on this project, I intend to limit the span of these robotic skills in order to save development time, and trade this off for more features.
 
 ![](https://github.com/ezececi/poppy/blob/master/poppy_github_metainfo/img/2021_05_Poppy_pictures/Poppy_Front.jpg)
@@ -32,7 +32,4 @@ On-going on dev-senses : Use computer vision (object detection with Tensorflow) 
 - Add motors in order to add some degrees of freedom ?
 - Update the whole architecture for a bigger stronger robotic arm ?
 
-## References
-
-Poppy project : https://www.poppy-project.org/fr/robots/poppy-ergo-jr/
 
